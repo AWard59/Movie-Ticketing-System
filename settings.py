@@ -5,9 +5,9 @@ import mysql.connector
 def mysql_connection():
     #Get your DB connection from "DataBase Info" Tab
     HOST = 'localhost'
-    USERNAME = 'USERNAME'
-    PASSWORD = 'PASSWORD'
-    DATABASE = 'DATABASE'
+    USERNAME = 'bc71c215'
+    PASSWORD = 'Cab@22se'
+    DATABASE = 'bc71c215'
 
     mydb = mysql.connector.connect(
         host=HOST,
