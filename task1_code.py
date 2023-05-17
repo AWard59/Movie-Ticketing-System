@@ -21,6 +21,7 @@ def register(registration_form):
     name = registration_form['name']
     email = registration_form['email']
     username = registration_form['username']
+    password = registration_form['password']
     # name length should be greater than 3 and should not have any digits
     if len(name) <= 3 or has_numbers(name):
         return "the name should have a minimum length of 4 characters and must not contain any digits."
@@ -31,6 +32,8 @@ def register(registration_form):
     if not check_email(email):
         return "Invalid email."
     ## password should be greater than 8 digits and must have numbers, reuse has_number function
+    if len(password) <= 8 or not has_numbers(password):
+        return "password should be greater than 8 digits and must have numbers."
     ## after validation insert into database
     ## create connection
     pass
