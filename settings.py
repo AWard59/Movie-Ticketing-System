@@ -1,6 +1,5 @@
 import mysql.connector
 
-
 #Following function will create a mysql connection.
 def mysql_connection():
     #Get your DB connection from "DataBase Info" Tab
@@ -15,17 +14,5 @@ def mysql_connection():
         password=PASSWORD,
         database=DATABASE
     )
-    ## returns cursor
-    sql = mydb.cursor()
 
-    sql.execute("""
-          CREATE TABLE IF NOT EXISTS my_users (
-          name varchar(255) DEFAULT NULL,
-          username varchar(255) DEFAULT NULL,
-          email varchar(255) DEFAULT NULL,
-          date varchar(255) DEFAULT NULL,
-          password varchar(255) DEFAULT NULL
-          )
-        """)
-    
     return mydb

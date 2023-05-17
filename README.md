@@ -29,8 +29,6 @@ password_value = 'testdfs77ds'
 
 registration_form = {'name': name_value, 'username': user_name, 'email': email_value, 'dob': date_value, 'password': password_value}
 
- 
-
 You need to write code as indicated in the comments within the code to validate and capture the data.
 
 Steps:

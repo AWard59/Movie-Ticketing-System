@@ -7,58 +7,82 @@ def has_numbers(inputString):
     return any(char.isdigit() for char in inputString)
 
 # write a function for for validating an Email
+
+
 def check_email(email):
     # pass the regular expression and the string into the fullmatch() method
     pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
     if re.fullmatch(pattern, email):
-    #return Boolean Value
-      return True
+        #return Boolean Value
+        return True
     else:
-      return False
+        return False
 
 ## form to validate
+
+
 def register(registration_form):
-    name = registration_form['name']
-    email = registration_form['email']
-    username = registration_form['username']
-    password = registration_form['password']
-    # name length should be greater than 3 and should not have any digits
-    if len(name) <= 3 or has_numbers(name):
-        return "the name should have a minimum length of 4 characters and must not contain any digits."
-    # username should have a minimum length of 5 characters
-    if len(username) < 5:
-        return "the username must have a minimum length of 5 characters."
-    ## check email validation here
-    if not check_email(email):
-        return "Invalid email."
-    ## password should be greater than 8 digits and must have numbers, reuse has_number function
-    if len(password) <= 8 or not has_numbers(password):
-        return "password should be greater than 8 digits and must have numbers."
-    ## after validation insert into database
-    ## create connection
-    pass
-
-
-def capture_data(registration_form):
-
-    ## if registration is valid
-    data = register(registration_form)
-    if data == True:
-
+    # create connection
+    mydb = mysql_connection()
+    sql = mydb.cursor()
+    try:
         name = registration_form['name']
         email = registration_form['email']
         username = registration_form['username']
-        date = registration_form['dob']
         password = registration_form['password']
-
+        date = registration_form['dob']
+        # name length should be greater than 3 and should not have any digits
+        if len(name) <= 3 or has_numbers(name):
+            raise ValueError(
+                "the name should have a minimum length of 4 characters and must not contain any digits.")
         ## check if username already in database, use 'where' clause
-        ## if
+        sql.execute("SELECT * FROM my_users WHERE username = %s", (username,))
+        existing_username = sql.fetchone()
+        if existing_username:
+            raise ValueError("username already taken, try another username.")
+        # username should have a minimum length of 5 characters
+        if len(username) < 5:
+            raise ValueError(
+                "the username must have a minimum length of 5 characters.")
+        ## check email validation here
+        if not check_email(email):
+            raise ValueError("Invalid email.")
+        ## password should be greater than 8 digits and must have numbers, reuse has_number function
+        if len(password) <= 8 or not has_numbers(password):
+            raise ValueError(
+                "password should be greater than 8 digits and must have numbers.")
+        # if all validations pass, create a new record, insert values into table
+        sql.execute("INSERT INTO my_users (name, username, email, date, password) VALUES (%s, %s, %s, %s, %s)",
+                    (name, username, email, date, password))
+        mydb.commit()
+    except ValueError as error:
+        return str(error)
+    return None
 
-        #if username not taken create a new record, insert values into table
-    else:
-        return data
+
+def capture_data(registration_form):
+    # Create the my_users table if it doesn't exist
+    mydb = mysql_connection()
+    sql = mydb.cursor()
+    sql.execute("""
+            CREATE TABLE IF NOT EXISTS my_users (
+            name varchar(255) DEFAULT NULL,
+            USERNAME varchar(255) DEFAULT NULL,
+            email varchar(255) DEFAULT NULL,
+            date varchar(255) DEFAULT NULL,
+            password varchar(255) DEFAULT NULL
+            )
+        """)
+    mydb.commit()
+
+    result = register(registration_form)
+    ## if registration is valid
+    if result is not None:
+        return result
 
 #do not delete following function
+
+
 def task_runner():
     ## Test data
     name = 'test username'
