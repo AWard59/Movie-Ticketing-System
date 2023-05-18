@@ -57,7 +57,7 @@ def register(registration_form):
         mydb.commit()
     except ValueError as error:
         return str(error)
-    return None
+    return 'successfully registered'
 
 
 def capture_data(registration_form):
@@ -77,12 +77,20 @@ def capture_data(registration_form):
 
     result = register(registration_form)
     ## if registration is valid
-    if result is not None:
+    if result:
         return result
 
+    # Check for database entries
+    sql.execute("SELECT COUNT(*) FROM my_users")
+    count = sql.fetchone()[0]
+    if count == 1:
+        return 'single entry'
+    elif count > 1:
+        return 'multiple entries'
+    else:
+        return 'no entries'
+
 #do not delete following function
-
-
 def task_runner():
     ## Test data
     name = 'test username'
